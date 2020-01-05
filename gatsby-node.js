@@ -1,19 +1,14 @@
-/**
- * Implement Gatsby's Node APIs in this file.
- *
- * See: https://www.gatsbyjs.org/docs/node-apis/
- */
-// You can delete this file if you're not using it
 const path = require('path');
-// https://www.npmjs.com/package/slash
 const slash = require('slash');
-// all of the pages revealed by WP-REST-API
+const { paginate } = require('gatsby-awesome-pagination');
+
 exports.createPages = async ({ graphql, actions }) => {
-  //
   const { createPage } = actions;
-  // abs path to template
+
   const pageTemplate = path.resolve('./src/templates/page.js');
-  // query
+  const archiveTemplate = path.resolve('./src/templates/archive.js');
+  const postTemplate = path.resolve('./src/templates/post.js');
+
   const result = await graphql(`
     {
       allWordpressPage {
@@ -27,6 +22,28 @@ exports.createPages = async ({ graphql, actions }) => {
           }
         }
       }
+      allWordpressPost {
+        edges {
+          node {
+            id
+            link
+            status
+            categories {
+              id
+            }
+          }
+        }
+      }
+      allWordpressCategory {
+        edges {
+          node {
+            id
+            name
+            slug
+            count
+          }
+        }
+      }
     }
   `);
 
@@ -34,18 +51,44 @@ exports.createPages = async ({ graphql, actions }) => {
   if (result.errors) {
     throw new Error(result.errors);
   }
-  //
-  const { allWordpressPage } = result.data;
-  // loop over all pages
+
+  const { allWordpressPage, allWordpressPost, allWordpressCategory } = result.data;
+
+  // Create archive pages for each category
+  allWordpressCategory.edges.forEach(catEdge => {
+    // First filter out the posts that belongs to the current category
+    const filteredPosts = allWordpressPost.edges.filter((
+      // destruct node
+      { node: { categories } }
+    ) =>
+      // filter by category
+      categories.some(el => el.id === catEdge.node.id)
+    );
+    // Some categories may be empty and we don't want to show them
+    if (filteredPosts.length > 0) {
+      paginate({
+        createPage,
+        items: filteredPosts,
+        itemsPerPage: 10,
+        pathPrefix: `/trends/${catEdge.node.slug}`,
+        component: slash(archiveTemplate),
+        // pass these
+        context: {
+          catId: catEdge.node.id,
+          catName: catEdge.node.name,
+          catSlug: catEdge.node.slug,
+          catCount: catEdge.node.count,
+          categories: allWordpressCategory.edges
+        }
+      });
+    }
+  });
+
   allWordpressPage.edges.forEach(edge => {
-    // if published
     if (edge.node.status === 'publish') {
-      //
       createPage({
         path: edge.node.link,
-        // Convert Windows backslash paths to slash paths: foo\\bar ➔ foo/bar
         component: slash(pageTemplate),
-        // reveal to component template
         context: {
           id: edge.node.id,
           parent: edge.node.wordpress_parent,
