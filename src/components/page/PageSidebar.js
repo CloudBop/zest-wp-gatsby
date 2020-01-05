@@ -46,6 +46,7 @@ const PageSidebar = ({ children, parentChildren, currentPage, parent }) => {
         <img src={tangoPage} alt="tango-page" /> <span dangerouslySetInnerHTML={{ __html: parent.title }} />
       </li>
       {parentChildren.edges.map(child => (
+        // no l
         <li key={child.node.id} className={currentPage.id === child.node.id ? 'sidebar-highlighted' : ''}>
           {/** no link if it's page usr currently on */}
           {currentPage.id === child.node.id ? (

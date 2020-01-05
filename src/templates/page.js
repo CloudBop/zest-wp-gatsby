@@ -35,6 +35,7 @@ export default PageTemplate;
 export const pageQuery = graphql`
   query($id: String!, $parent: Int!, $wpId: Int!) {
     currentPage: wordpressPage(id: { eq: $id }) {
+      id
       title
       content
       wordpress_parent
