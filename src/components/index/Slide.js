@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'gatsby';
 
 import { StyledImg, CgrSlide } from './styles/HeroSliderStyles';
-
+// TODO - proptype
 const Slide = ({ slide, active }) => (
   //
   <CgrSlide className={active ? 'active' : ''}>
