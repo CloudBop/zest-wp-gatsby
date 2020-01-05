@@ -5,7 +5,7 @@ export const StyledImg = styled(Img)`
   height: 800px;
 `;
 
-export const WbnSlide = styled.div`
+export const CgrSlide = styled.div`
   position: absolute;
   height: 800px;
   width: 100%;
