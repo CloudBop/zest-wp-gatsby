@@ -1,5 +1,39 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import { Link } from 'gatsby';
+import PropTypes from 'prop-types';
 
-const Navigation = () => <div>Navigation</div>;
+import { NavigationWrapper } from './styles/NavigationStyles';
+
+const Navigation = ({ menu }) => (
+  <NavigationWrapper>
+    <ul>
+      {menu.items.map((item, i) => (
+        <li key={i}>
+          <Link to={item.url} activeClassName="nav-active">
+            {item.title}
+          </Link>
+          {item.wordpress_children ? (
+            <Fragment>
+              <span>&#8964;</span>
+              <ul>
+                {item.wordpress_children.map((child, iChild) => (
+                  <li key={iChild}>
+                    <Link to={child.url} activeClassName="nav-active">
+                      {child.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Fragment>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  </NavigationWrapper>
+);
+
+Navigation.propTypes = {
+  menu: PropTypes.object
+};
 
 export default Navigation;

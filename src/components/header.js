@@ -10,7 +10,7 @@ const Header = () => {
   const {
     //
     site,
-    //
+    // navigation menu, passed as prop
     menu: { edges: [ { node: menu } ] }
   } = useStaticQuery(graphql`
     query HeaderQuery {
