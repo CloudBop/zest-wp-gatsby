@@ -97,4 +97,17 @@ exports.createPages = async ({ graphql, actions }) => {
       });
     }
   });
+  // reveal all posts to graphql
+  allWordpressPost.edges.forEach(edge => {
+    // is published
+    if (edge.node.status === 'publish') {
+      createPage({
+        path: `/trends${edge.node.link}`,
+        component: slash(postTemplate),
+        context: {
+          id: edge.node.id
+        }
+      });
+    }
+  });
 };
