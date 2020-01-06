@@ -35,7 +35,7 @@ postTemplate.propTypes = {
 };
 
 export default postTemplate;
-
+// revealed from gatsby-node to template components
 export const pageQuery = graphql`
   query($id: String!) {
     post: wordpressPost(id: { eq: $id }) {
